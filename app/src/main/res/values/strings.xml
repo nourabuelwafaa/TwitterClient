@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">TwitterClient</string>
+    <string name="loading">Loading</string>
+    <string name="Error">Server Error</string>
+</resources>
