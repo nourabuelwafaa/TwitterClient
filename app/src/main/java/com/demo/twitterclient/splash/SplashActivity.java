@@ -26,7 +26,7 @@ public class SplashActivity extends ParentActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                getPrefs().edit().clear().apply();
+            //    getPrefs().edit().clear().apply();
                 if (getPrefs().getBoolean(LoginContract.IS_LOGGED_PREFS, false)) {
 
                     startActivity(new Intent(SplashActivity.this, FollowersActivity.class));

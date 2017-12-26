@@ -1,5 +1,6 @@
 package com.demo.twitterclient.repo;
 
+import com.demo.twitterclient.repo.tweet.Tweet;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public class User {
     private int followersCount;
     @SerializedName("friends_count")
     private int friendsCount;
-    @SerializedName("profile_background_image_url")
+    @SerializedName("profile_banner_url")
     private String profileBackgroundImageUrl;
     @SerializedName("profile_image_url")
     private String profileImageUrl;

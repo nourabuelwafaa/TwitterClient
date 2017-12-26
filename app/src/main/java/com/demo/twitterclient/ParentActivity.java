@@ -8,8 +8,12 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Slide;
 import android.util.Log;
+import android.view.Gravity;
 import android.widget.Toast;
 
 import com.demo.twitterclient.repo.BaseClient;
@@ -73,5 +77,14 @@ public abstract class ParentActivity extends AppCompatActivity implements MainCo
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
 
+    }
+
+    public void showFragment(Fragment fragment) {
+        fragment.setEnterTransition(new Slide(Gravity.BOTTOM));
+        fragment.setExitTransition(new Slide(Gravity.TOP));
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.add(R.id.mainView, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }
