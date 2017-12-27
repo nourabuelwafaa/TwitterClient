@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.demo.twitterclient.OnItemCLicked;
@@ -18,13 +17,11 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-
 public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.MyViewHolder> {
 
     private OnItemCLicked activity;
     private List<User> list;
     private Context context;
-
 
     public FollowersAdapter(Context context, OnItemCLicked activity, List<User> list) {
         this.activity = activity;
@@ -44,6 +41,7 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.MyVi
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         User user = list.get(position);
         holder.usernameTv.setText(user.getName());
+        holder.screenNameTv.setText(user.getScreenName());
         if (Utils.checkNull(user.getDescription())) {
             holder.userBioTv.setText(user.getDescription());
             holder.userBioTv.setVisibility(View.VISIBLE);
@@ -55,7 +53,7 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.MyVi
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                activity.onItemClicked(holder.getAdapterPosition());
+                activity.onItemClicked(holder.getAdapterPosition(), holder.userPhotoIv);
             }
         });
     }
@@ -68,12 +66,13 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.MyVi
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView usernameTv, userBioTv;
+        TextView usernameTv, userBioTv, screenNameTv;
         CircleImageView userPhotoIv;
 
         MyViewHolder(View itemView) {
             super(itemView);
             usernameTv = itemView.findViewById(R.id.usernameTv);
+            screenNameTv = itemView.findViewById(R.id.screenNameTv);
             userBioTv = itemView.findViewById(R.id.userBioTv);
             userPhotoIv = itemView.findViewById(R.id.userPhotoIv);
 

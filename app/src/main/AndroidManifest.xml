@@ -23,12 +23,10 @@
         </activity>
         <activity
             android:name=".followers.FollowersActivity"
-            android:label="Followers"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:label="" />
         <activity
             android:name=".user.UserInfoActivity"
-            android:label=""
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:label="" />
     </application>
 
 </manifest>

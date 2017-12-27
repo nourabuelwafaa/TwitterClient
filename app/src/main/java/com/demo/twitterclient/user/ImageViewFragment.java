@@ -8,15 +8,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.demo.twitterclient.R;
+import com.demo.twitterclient.Utils;
+import com.github.chrisbanes.photoview.PhotoView;
+import com.squareup.picasso.Picasso;
 
 import eightbitlab.com.blurview.BlurView;
 import eightbitlab.com.blurview.RenderScriptBlur;
 
 
 public class ImageViewFragment extends Fragment {
-    private View mainView;
-    private static final String ARG_PARAM1 = "param1";
-    private String mParam1;
+    private static final String PHOTO_URL = "photoUrl";
+    private String photoUrl;
     BlurView blurView;
 
 
@@ -25,10 +27,10 @@ public class ImageViewFragment extends Fragment {
     }
 
 
-    public static ImageViewFragment newInstance(String param1) {
+    public static ImageViewFragment newInstance(String photo) {
         ImageViewFragment fragment = new ImageViewFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
+        args.putString(PHOTO_URL, photo);
         fragment.setArguments(args);
         return fragment;
     }
@@ -37,23 +39,23 @@ public class ImageViewFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
+            photoUrl = getArguments().getString(PHOTO_URL);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mainView = inflater.inflate(R.layout.fragment_user_info, container, false);
+        View mainView = inflater.inflate(R.layout.fragment_image_view, container, false);
         View decorView = getActivity().getWindow().getDecorView();
-        //Activity's root View. Can also be root View of your layout (preferably)
-        ViewGroup rootView = (ViewGroup) decorView.findViewById(R.id.mainView);
-        //set background, if your root layout doesn't have one
+        ViewGroup rootView = decorView.findViewById(R.id.mainView);
 
         blurView = mainView.findViewById(R.id.blurView);
         blurView.setupWith(rootView)
                 .blurAlgorithm(new RenderScriptBlur(getActivity()))
                 .blurRadius(20);
+        PhotoView photoView = mainView.findViewById(R.id.imageView);
+        Picasso.with(getActivity()).load(Utils.getBiggerPhoto(photoUrl)).into(photoView);
         return mainView;
     }
 

@@ -11,9 +11,13 @@ public interface MainContract {
 
         void showMessage(@StringRes int message);
 
-        void showDialog();
+        void showProgress();
 
-        void hideDialog();
+        void hideProgress();
+
+        void showSnackBar(@StringRes int message, int viewId);
+
+        boolean isConnected();
 
         SharedPreferences getPrefs();
     }

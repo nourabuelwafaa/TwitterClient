@@ -1,11 +1,15 @@
 package com.demo.twitterclient.followers;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.demo.twitterclient.OnItemCLicked;
 import com.demo.twitterclient.ParentActivity;
@@ -21,6 +25,8 @@ public class FollowersActivity extends ParentActivity implements FollowersContra
     private FollowersAdapter followersAdapter;
     List<User> followers = new ArrayList<>();
     private SwipeRefreshLayout swipeRefreshLayout;
+    View sharedElementView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,26 +34,33 @@ public class FollowersActivity extends ParentActivity implements FollowersContra
         setContentView(R.layout.activity_followers);
         initUi();
         presenter = new FollowersPresenterImpl(this);
-        presenter.getFollowers();
+        presenter.getFollowers(false);
+
     }
 
     private void initUi() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        showProgress();
         swipeRefreshLayout = findViewById(R.id.swipeRefresh);
         swipeRefreshLayout.setOnRefreshListener(this);
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        } else {
+            recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+
+        }
         followersAdapter = new FollowersAdapter(this, this, followers);
         recyclerView.setAdapter(followersAdapter);
 
     }
 
     @Override
-    public void onItemClicked(int position) {
-       // presenter.onUserClicked(position);
-        startActivity(new Intent(this, UserInfoActivity.class));
-        //   showFragment(new ImageViewFragment());
+    public void onItemClicked(int position, View view) {
+        sharedElementView = view;
+        presenter.onUserClicked(position);
 
     }
 
@@ -59,6 +72,7 @@ public class FollowersActivity extends ParentActivity implements FollowersContra
                 if (swipeRefreshLayout.isRefreshing()) {
                     swipeRefreshLayout.setRefreshing(false);
                 }
+                hideProgress();
                 FollowersActivity.this.followers.clear();
                 FollowersActivity.this.followers.addAll(followers);
                 followersAdapter.notifyDataSetChanged();
@@ -68,13 +82,23 @@ public class FollowersActivity extends ParentActivity implements FollowersContra
     }
 
     @Override
-    public void showUserDetails(User user) {
+    public void showUserDetails(final String user) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(FollowersActivity.this, UserInfoActivity.class);
+                String transitionName = getString(R.string.userImage);
+                ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(FollowersActivity.this, sharedElementView, transitionName);
+                intent.putExtra(User.USER_INTENT_KEY, user);
+                startActivity(intent, activityOptions.toBundle());
+            }
+        });
 
     }
 
     @Override
     public void onRefresh() {
-        presenter.getFollowers();
+        presenter.getFollowers(true);
 
     }
 }

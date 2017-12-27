@@ -8,19 +8,11 @@
     android:focusable="true"
     tools:context="com.demo.twitterclient.user.ImageViewFragment">
 
-    <LinearLayout
+    <com.github.chrisbanes.photoview.PhotoView
+        android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="25dp"
-        android:background="@drawable/border">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="10dp"
-            android:text="@string/hello_blank_fragment" />
-
-    </LinearLayout>
+        android:layout_height="500dp"
+        android:layout_gravity="center" />
 
 
 </eightbitlab.com.blurview.BlurView>

@@ -7,14 +7,18 @@ import java.util.List;
 
 public class User {
 
+    public static final String USER_INTENT_KEY = "userIntentKey";
+
     @SerializedName("id")
-    private int id;
+    private long id;
     @SerializedName("name")
     private String name;
     @SerializedName("description")
     private String description;
     @SerializedName("followers_count")
     private int followersCount;
+    @SerializedName("screen_name")
+    private String screenName;
     @SerializedName("friends_count")
     private int friendsCount;
     @SerializedName("profile_banner_url")
@@ -24,11 +28,11 @@ public class User {
 
     private List<Tweet> tweets;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -86,5 +90,13 @@ public class User {
 
     public void setTweets(List<Tweet> tweets) {
         this.tweets = tweets;
+    }
+
+    public String getScreenName() {
+        return "@" + screenName;
+    }
+
+    public void setScreenName(String screenName) {
+        this.screenName = screenName;
     }
 }

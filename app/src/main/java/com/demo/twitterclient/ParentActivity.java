@@ -1,21 +1,31 @@
 package com.demo.twitterclient;
 
+import android.app.IntentService;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.Slide;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.demo.twitterclient.login.LoginActivity;
 import com.demo.twitterclient.repo.BaseClient;
 import com.twitter.sdk.android.core.DefaultLogger;
 import com.twitter.sdk.android.core.Twitter;
@@ -25,7 +35,6 @@ import com.twitter.sdk.android.core.TwitterConfig;
 
 public abstract class ParentActivity extends AppCompatActivity implements MainContract.MainView {
 
-    private ProgressDialog dialog;
     private static final String PREFS = "SharedPrefs";
 
 
@@ -40,31 +49,63 @@ public abstract class ParentActivity extends AppCompatActivity implements MainCo
         Twitter.initialize(config);
     }
 
+
     @Override
-    public void showDialog() {
-        if (dialog == null) {
-            dialog = ProgressDialog.show(this, "", getString(R.string.loading));
-        } else {
-            dialog.show();
-        }
+    public void showProgress() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ProgressBar progressBar = findViewById(R.id.progressBar);
+                progressBar.setVisibility(View.VISIBLE);
+                findViewById(R.id.placeHolder).setVisibility(View.VISIBLE);
+            }
+        });
+
 
     }
 
     @Override
-    public void hideDialog() {
-        if (dialog != null && dialog.isShowing()) {
-            dialog.dismiss();
-        }
+    public void hideProgress() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ProgressBar progressBar = findViewById(R.id.progressBar);
+                progressBar.setVisibility(View.GONE);
+                findViewById(R.id.placeHolder).setVisibility(View.GONE);
+            }
+        });
+
     }
 
     @Override
-    public void showMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    public void showMessage(final String message) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(ParentActivity.this, message, Toast.LENGTH_SHORT).show();
+
+            }
+        });
     }
 
     @Override
-    public void showMessage(@StringRes int message) {
-        Toast.makeText(this, getString(message), Toast.LENGTH_SHORT).show();
+    public void showMessage(@StringRes final int message) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(ParentActivity.this, getString(message), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void showSnackBar(@StringRes final int message, final int viewId) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Snackbar.make(findViewById(viewId), message, Snackbar.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
@@ -72,7 +113,8 @@ public abstract class ParentActivity extends AppCompatActivity implements MainCo
         return getSharedPreferences(PREFS, MODE_PRIVATE);
     }
 
-    boolean isConnected() {
+    @Override
+    public boolean isConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
@@ -86,5 +128,27 @@ public abstract class ParentActivity extends AppCompatActivity implements MainCo
         transaction.add(R.id.mainView, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (id == R.id.logoutBtn) {
+            getPrefs().edit().clear().apply();
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

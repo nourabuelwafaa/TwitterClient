@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-class ExtendedEntities {
+public class ExtendedEntities {
     @SerializedName("media")
     private List<Media> media;
 

@@ -1,17 +1,96 @@
 package com.demo.twitterclient.user;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.demo.twitterclient.OnItemCLicked;
+import com.demo.twitterclient.ParentActivity;
 import com.demo.twitterclient.R;
+import com.demo.twitterclient.repo.User;
+import com.demo.twitterclient.repo.tweet.Tweet;
+import com.squareup.picasso.Picasso;
 
-public class UserInfoActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
+public class UserInfoActivity extends ParentActivity implements UserInfoContract.UserInfoView, OnItemCLicked {
+    UserInfoContract.UserPresenter presenter;
+    List<Tweet> tweets = new ArrayList<>();
+    TweetsAdapter recyclerAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_info);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        String userJson = getIntent().getStringExtra(User.USER_INTENT_KEY);
+        initUi();
+        presenter = new UserPresenterImpl(this);
+        presenter.onHandleUserInfo(userJson);
+
+    }
+
+    private void initUi() {
+        showProgress();
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerAdapter = new TweetsAdapter(this, this, tweets);
+        recyclerView.setAdapter(recyclerAdapter);
+
+    }
+
+    @Override
+    public void showTweets(final List<Tweet> tweets) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                hideProgress();
+                UserInfoActivity.this.tweets.clear();
+                UserInfoActivity.this.tweets.addAll(tweets);
+                recyclerAdapter.notifyDataSetChanged();
+            }
+        });
+
+    }
+
+    @Override
+    public void showUserDetails(final User user) {
+        CircleImageView userImage = findViewById(R.id.userPhotoIv);
+        Picasso.with(this).load(user.getProfileImageUrl()).into(userImage);
+        userImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showFragment(ImageViewFragment.newInstance(user.getProfileImageUrl()));
+            }
+        });
+
+        TextView usernameTv = findViewById(R.id.usernameTv);
+        usernameTv.setText(user.getName());
+
+        TextView screenNameTv = findViewById(R.id.screenNameTv);
+        screenNameTv.setText(user.getScreenName());
+
+        ImageView backgroundImage = findViewById(R.id.backgroundIv);
+        Picasso.with(this).load(user.getProfileBackgroundImageUrl()).into(backgroundImage);
+        backgroundImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showFragment(ImageViewFragment.newInstance(user.getProfileBackgroundImageUrl()));
+            }
+        });
+
+    }
+
+    @Override
+    public void onItemClicked(int position, View view) {
+
     }
 }

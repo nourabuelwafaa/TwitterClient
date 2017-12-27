@@ -8,6 +8,10 @@ public class Utils {
     }
 
     public static String getBiggerPhoto(String photoUrl) {
-        return photoUrl.replace("normal", "bigger");
+        return photoUrl.replace("_normal", "");
+    }
+
+    public static String getTweetImage(String profileImageUrl) {
+        return profileImageUrl + ":small";
     }
 }
