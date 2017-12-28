@@ -1,10 +1,9 @@
 package com.demo.twitterclient;
 
-import android.app.IntentService;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -20,17 +19,18 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.demo.twitterclient.login.LoginActivity;
-import com.demo.twitterclient.repo.BaseClient;
+import com.demo.twitterclient.repo.RetrofitClient;
 import com.twitter.sdk.android.core.DefaultLogger;
 import com.twitter.sdk.android.core.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterConfig;
+
+import io.fabric.sdk.android.Fabric;
 
 
 public abstract class ParentActivity extends AppCompatActivity implements MainContract.MainView {
@@ -41,71 +41,57 @@ public abstract class ParentActivity extends AppCompatActivity implements MainCo
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         TwitterConfig config = new TwitterConfig.Builder(this)
                 .logger(new DefaultLogger(Log.DEBUG))
-                .twitterAuthConfig(new TwitterAuthConfig(BaseClient.CONSUMER_KEY, BaseClient.CONSUMER_SECRET))
+                .twitterAuthConfig(new TwitterAuthConfig(RetrofitClient.CONSUMER_KEY, RetrofitClient.CONSUMER_SECRET))
                 .debug(true)
                 .build();
         Twitter.initialize(config);
+
     }
 
 
     @Override
     public void showProgress() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ProgressBar progressBar = findViewById(R.id.progressBar);
-                progressBar.setVisibility(View.VISIBLE);
-                findViewById(R.id.placeHolder).setVisibility(View.VISIBLE);
-            }
-        });
-
-
+        ProgressBar progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideProgress() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ProgressBar progressBar = findViewById(R.id.progressBar);
-                progressBar.setVisibility(View.GONE);
-                findViewById(R.id.placeHolder).setVisibility(View.GONE);
-            }
-        });
+        ProgressBar progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
 
+    }
+
+    @Override
+    public void showPlaceHolder() {
+        findViewById(R.id.placeHolder).setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hidePlaceholder() {
+        findViewById(R.id.placeHolder).setVisibility(View.GONE);
     }
 
     @Override
     public void showMessage(final String message) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(ParentActivity.this, message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(ParentActivity.this, message, Toast.LENGTH_SHORT).show();
 
-            }
-        });
     }
 
     @Override
     public void showMessage(@StringRes final int message) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(ParentActivity.this, getString(message), Toast.LENGTH_SHORT).show();
-            }
-        });
+        Toast.makeText(ParentActivity.this, getString(message), Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
     public void showSnackBar(@StringRes final int message, final int viewId) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Snackbar.make(findViewById(viewId), message, Snackbar.LENGTH_LONG).show();
-            }
-        });
+
+        Snackbar.make(findViewById(viewId), message, Snackbar.LENGTH_LONG).show();
+
     }
 
     @Override
@@ -150,5 +136,9 @@ public abstract class ParentActivity extends AppCompatActivity implements MainCo
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public boolean isPortrait() {
+        return getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
     }
 }

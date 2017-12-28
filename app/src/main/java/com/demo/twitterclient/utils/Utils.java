@@ -1,4 +1,4 @@
-package com.demo.twitterclient;
+package com.demo.twitterclient.utils;
 
 public class Utils {
 
@@ -7,9 +7,14 @@ public class Utils {
         return s != null && !s.equals("");
     }
 
-    public static String getBiggerPhoto(String photoUrl) {
+    public static String getBiggerBackground(String photoUrl) {
         return photoUrl.replace("_normal", "");
     }
+
+    public static String getBiggerPhoto(String photoUrl) {
+        return photoUrl.replace("normal", "bigger");
+    }
+
 
     public static String getTweetImage(String profileImageUrl) {
         return profileImageUrl + ":small";

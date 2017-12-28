@@ -1,37 +1,23 @@
 package com.demo.twitterclient.user;
 
-import android.widget.ExpandableListView;
-
-import com.demo.twitterclient.MyLog;
 import com.demo.twitterclient.R;
-import com.demo.twitterclient.followers.FollowersContract;
 import com.demo.twitterclient.login.LoginContract;
-import com.demo.twitterclient.repo.BaseClient;
-import com.demo.twitterclient.repo.Followers;
-import com.demo.twitterclient.repo.OnResponseHandler;
-import com.demo.twitterclient.repo.User;
-import com.demo.twitterclient.repo.tweet.Tweet;
-import com.github.scribejava.core.model.OAuth1AccessToken;
-import com.github.scribejava.core.model.OAuthRequest;
-import com.github.scribejava.core.model.Verb;
+import com.demo.twitterclient.repo.RetrofitClient;
+import com.demo.twitterclient.repo.TweetsService;
+import com.demo.twitterclient.repo.model.User;
+import com.demo.twitterclient.repo.model.tweet.Tweet;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 public class UserPresenterImpl implements UserInfoContract.UserPresenter {
 
     private UserInfoContract.UserInfoView view;
-    private static final String TWEETS_URL = BaseClient.BASE_URL + "/statuses/user_timeline.json?user_id=";
-    private OAuth1AccessToken oAuth1AccessToken;
-
 
     UserPresenterImpl(UserInfoContract.UserInfoView view) {
         this.view = view;
-        String token = view.getPrefs().getString(LoginContract.TOKEN_PREFS, "");
-        String tokenKey = view.getPrefs().getString(LoginContract.TOKEN_KEY_PREFS, "");
-        oAuth1AccessToken = new OAuth1AccessToken(token, tokenKey);
+        RetrofitClient.TOKEN_KEY = view.getPrefs().getString(LoginContract.TOKEN_KEY_PREFS, "");
+        RetrofitClient.TOKEN_SECRET = view.getPrefs().getString(LoginContract.TOKEN_SECRET_PREFS, "");
 
     }
 
@@ -47,27 +33,21 @@ public class UserPresenterImpl implements UserInfoContract.UserPresenter {
         if (!view.isConnected()) {
             view.showSnackBar(R.string.notConnected, R.id.mainView);
             view.hideProgress();
+            view.hidePlaceholder();
+            return;
         }
 
-        BaseClient.serviceCall(oAuth1AccessToken, new OAuthRequest(Verb.GET, getTweetsUrl(userId)), new OnResponseHandler() {
+        TweetsService.getInstance().getTweets(userId, new TweetsService.TweetsCallback() {
             @Override
-            public void onResponseHandler(boolean isSuccess, String response) {
-                if (isSuccess && !response.contains("Not authorized")) {
-                    Type type = new TypeToken<List<Tweet>>() {
-                    }.getType();
-                    List<Tweet> tweets = new Gson().fromJson(response, type);
+            public void setTweets(boolean isSuccess, List<Tweet> tweets) {
+                view.hideProgress();
+                if (isSuccess) {
                     view.showTweets(tweets);
-                    MyLog.d(response);
                 } else {
                     view.showMessage(R.string.Error);
-                    view.hideProgress();
+
                 }
             }
         });
-    }
-
-    private String getTweetsUrl(long userId) {
-        return TWEETS_URL + userId + "&count=10";
-//        &exclude_replies=true
     }
 }

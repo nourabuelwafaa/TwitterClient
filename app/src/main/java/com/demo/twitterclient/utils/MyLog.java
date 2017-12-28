@@ -1,4 +1,4 @@
-package com.demo.twitterclient;
+package com.demo.twitterclient.utils;
 
 import android.util.Log;
 

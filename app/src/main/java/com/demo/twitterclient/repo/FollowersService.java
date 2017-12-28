@@ -1,15 +1,16 @@
 package com.demo.twitterclient.repo;
 
-import com.demo.twitterclient.MyLog;
-import com.github.scribejava.core.model.OAuth1AccessToken;
-import com.github.scribejava.core.model.OAuthRequest;
-import com.github.scribejava.core.model.Verb;
-import com.google.gson.Gson;
+import android.support.annotation.NonNull;
 
-import java.util.List;
+import com.demo.twitterclient.repo.model.Followers;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.http.GET;
+import retrofit2.http.Query;
 
 public class FollowersService {
-    private static final String FOLLOWERS_URL = BaseClient.BASE_URL + "/followers/list.json?cursor=-1";
     private static final FollowersService instance = new FollowersService();
     private Followers followers;
 
@@ -21,25 +22,25 @@ public class FollowersService {
     }
 
 
-    public void getFollowers(String token, String tokenKey, boolean forceRefresh, final FollowersCallback callback) {
+    public void getFollowers(long cursor, final FollowersCallback callback) {
 
 
-        if (!forceRefresh && followers != null) {
-            callback.setFollowers(true, followers);
-            return;
-        }
-
-        OAuth1AccessToken oAuth1AccessToken = new OAuth1AccessToken(token, tokenKey);
-        BaseClient.serviceCall(oAuth1AccessToken, new OAuthRequest(Verb.GET, FOLLOWERS_URL), new OnResponseHandler() {
+        RetrofitClient.getInstance().create(GetFollowers.class).getFollowers(cursor).enqueue(new Callback<Followers>() {
             @Override
-            public void onResponseHandler(boolean isSuccess, String response) {
-                if (isSuccess) {
-                    followers = new Gson().fromJson(response, Followers.class);
-                    callback.setFollowers(true, followers);
-                    MyLog.d(response);
+            public void onResponse(@NonNull Call<Followers> call, @NonNull Response<Followers> response) {
+                if (response.isSuccessful()) {
+                    followers = response.body();
+                    callback.setFollowers(true, response.body());
+
                 } else {
-                    callback.setFollowers(false, followers);
+                    callback.setFollowers(false, null);
                 }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Followers> call, @NonNull Throwable t) {
+                t.printStackTrace();
+                callback.setFollowers(false, null);
             }
         });
     }
@@ -47,5 +48,10 @@ public class FollowersService {
     public interface FollowersCallback {
 
         void setFollowers(boolean isSuccess, Followers followers);
+    }
+
+    private interface GetFollowers {
+        @GET("followers/list.json")
+        Call<Followers> getFollowers(@Query("cursor") long page);
     }
 }

@@ -8,13 +8,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.demo.twitterclient.MyLog;
+import com.demo.twitterclient.utils.MyLog;
 import com.demo.twitterclient.OnItemCLicked;
 import com.demo.twitterclient.R;
-import com.demo.twitterclient.repo.tweet.ExtendedEntities;
-import com.demo.twitterclient.repo.tweet.Media;
-import com.demo.twitterclient.repo.tweet.RetweetedStatus;
-import com.demo.twitterclient.repo.tweet.Tweet;
+import com.demo.twitterclient.repo.model.tweet.ExtendedEntities;
+import com.demo.twitterclient.repo.model.tweet.Media;
+import com.demo.twitterclient.repo.model.tweet.RetweetedStatus;
+import com.demo.twitterclient.repo.model.tweet.Tweet;
+import com.demo.twitterclient.utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -24,13 +25,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.MyViewHolder> {
 
-    private OnItemCLicked activity;
     private List<Tweet> list;
     private Context context;
 
 
-    public TweetsAdapter(Context context, OnItemCLicked activity, List<Tweet> list) {
-        this.activity = activity;
+    public TweetsAdapter(Context context, List<Tweet> list) {
         this.list = list;
         this.context = context;
     }
@@ -53,7 +52,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.MyViewHold
             Picasso.with(context).load(retweetedStatus.getUser().getProfileImageUrl()).into(holder.userPhotoIv);
         } else {
             holder.usernameTv.setText(tweet.getUser().getName());
-            Picasso.with(context).load(tweet.getUser().getProfileImageUrl()).into(holder.userPhotoIv);
+            Picasso.with(context).load(Utils.getBiggerPhoto(tweet.getUser().getProfileImageUrl())).into(holder.userPhotoIv);
         }
         holder.tweetTv.setText(tweet.getText());
         holder.retweetCountTv.setText(String.valueOf(tweet.getRetweetCount()));

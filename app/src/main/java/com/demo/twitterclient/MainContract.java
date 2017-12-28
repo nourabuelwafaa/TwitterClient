@@ -15,6 +15,10 @@ public interface MainContract {
 
         void hideProgress();
 
+        void hidePlaceholder();
+
+        void showPlaceHolder();
+
         void showSnackBar(@StringRes int message, int viewId);
 
         boolean isConnected();

@@ -11,8 +11,9 @@ import android.widget.TextView;
 import com.demo.twitterclient.OnItemCLicked;
 import com.demo.twitterclient.ParentActivity;
 import com.demo.twitterclient.R;
-import com.demo.twitterclient.repo.User;
-import com.demo.twitterclient.repo.tweet.Tweet;
+import com.demo.twitterclient.repo.model.User;
+import com.demo.twitterclient.repo.model.tweet.Tweet;
+import com.demo.twitterclient.utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class UserInfoActivity extends ParentActivity implements UserInfoContract.UserInfoView, OnItemCLicked {
+public class UserInfoActivity extends ParentActivity implements UserInfoContract.UserInfoView {
     UserInfoContract.UserPresenter presenter;
     List<Tweet> tweets = new ArrayList<>();
     TweetsAdapter recyclerAdapter;
@@ -40,31 +41,28 @@ public class UserInfoActivity extends ParentActivity implements UserInfoContract
 
     private void initUi() {
         showProgress();
+        showPlaceHolder();
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerAdapter = new TweetsAdapter(this, this, tweets);
+        recyclerAdapter = new TweetsAdapter(this, tweets);
         recyclerView.setAdapter(recyclerAdapter);
-
     }
 
     @Override
     public void showTweets(final List<Tweet> tweets) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                hideProgress();
-                UserInfoActivity.this.tweets.clear();
-                UserInfoActivity.this.tweets.addAll(tweets);
-                recyclerAdapter.notifyDataSetChanged();
-            }
-        });
+
+        hideProgress();
+        hidePlaceholder();
+        UserInfoActivity.this.tweets.clear();
+        UserInfoActivity.this.tweets.addAll(tweets);
+        recyclerAdapter.notifyDataSetChanged();
 
     }
 
     @Override
     public void showUserDetails(final User user) {
         CircleImageView userImage = findViewById(R.id.userPhotoIv);
-        Picasso.with(this).load(user.getProfileImageUrl()).into(userImage);
+        Picasso.with(this).load(Utils.getBiggerPhoto(user.getProfileImageUrl())).into(userImage);
         userImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -89,8 +87,4 @@ public class UserInfoActivity extends ParentActivity implements UserInfoContract
 
     }
 
-    @Override
-    public void onItemClicked(int position, View view) {
-
-    }
 }

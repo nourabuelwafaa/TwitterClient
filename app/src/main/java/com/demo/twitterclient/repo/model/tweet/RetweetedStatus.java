@@ -1,6 +1,6 @@
-package com.demo.twitterclient.repo.tweet;
+package com.demo.twitterclient.repo.model.tweet;
 
-import com.demo.twitterclient.repo.User;
+import com.demo.twitterclient.repo.model.User;
 import com.google.gson.annotations.SerializedName;
 
 public class RetweetedStatus {

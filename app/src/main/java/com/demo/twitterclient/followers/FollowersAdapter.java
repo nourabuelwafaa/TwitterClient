@@ -9,8 +9,8 @@ import android.widget.TextView;
 
 import com.demo.twitterclient.OnItemCLicked;
 import com.demo.twitterclient.R;
-import com.demo.twitterclient.Utils;
-import com.demo.twitterclient.repo.User;
+import com.demo.twitterclient.utils.Utils;
+import com.demo.twitterclient.repo.model.User;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -48,7 +48,7 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.MyVi
         } else {
             holder.userBioTv.setVisibility(View.GONE);
         }
-        Picasso.with(context).load(user.getProfileImageUrl()).into(holder.userPhotoIv);
+        Picasso.with(context).load(Utils.getBiggerPhoto(user.getProfileImageUrl())).into(holder.userPhotoIv);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

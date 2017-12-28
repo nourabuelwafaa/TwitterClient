@@ -1,6 +1,5 @@
-package com.demo.twitterclient.repo;
-
-import com.demo.twitterclient.repo.tweet.Tweet;
+package com.demo.twitterclient.repo.model;
+import com.demo.twitterclient.repo.model.tweet.Tweet;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;

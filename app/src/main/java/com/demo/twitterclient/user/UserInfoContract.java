@@ -1,8 +1,8 @@
 package com.demo.twitterclient.user;
 
 import com.demo.twitterclient.MainContract;
-import com.demo.twitterclient.repo.User;
-import com.demo.twitterclient.repo.tweet.Tweet;
+import com.demo.twitterclient.repo.model.User;
+import com.demo.twitterclient.repo.model.tweet.Tweet;
 
 import java.util.List;
 

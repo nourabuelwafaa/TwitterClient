@@ -1,4 +1,4 @@
-package com.demo.twitterclient.repo.tweet;
+package com.demo.twitterclient.repo.model.tweet;
 
 import com.google.gson.annotations.SerializedName;
 

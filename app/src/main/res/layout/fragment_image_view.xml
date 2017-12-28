@@ -1,9 +1,8 @@
-<eightbitlab.com.blurview.BlurView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/blurView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/transparent"
+    android:background="@color/black"
     android:clickable="true"
     android:focusable="true"
     tools:context="com.demo.twitterclient.user.ImageViewFragment">
@@ -11,8 +10,7 @@
     <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="match_parent"
         android:layout_gravity="center" />
 
-
-</eightbitlab.com.blurview.BlurView>
+</RelativeLayout>
