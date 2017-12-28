@@ -43,7 +43,9 @@ public class ImageViewFragment extends Fragment {
                              Bundle savedInstanceState) {
         View mainView = inflater.inflate(R.layout.fragment_image_view, container, false);
         PhotoView photoView = mainView.findViewById(R.id.imageView);
-        Picasso.with(getActivity()).load(Utils.getBiggerBackground(photoUrl)).into(photoView);
+        if (photoUrl != null) {
+            Picasso.with(getActivity()).load(Utils.getBiggerBackground(photoUrl)).into(photoView);
+        }
         return mainView;
     }
 
